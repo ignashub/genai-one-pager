@@ -1,28 +1,67 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import InterviewForm from './components/InterviewForm';
 import ResponseDisplay from './components/ResponseDisplay';
 import axios from 'axios';
 import { StructuredResponse, InterviewFormData } from './types/interview';
+import { useHasMounted } from '@/hooks/useHasMounted';
+import { Toast } from 'primereact/toast';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
 
 export default function Home() {
+  const hasMounted = useHasMounted();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>();
   const [response, setResponse] = useState<StructuredResponse>();
-  const [currentFormData, setCurrentFormData] = useState<InterviewFormData>(); // Store form data
+  const [currentFormData, setCurrentFormData] = useState<InterviewFormData>();
   const [feedback, setFeedback] = useState<string>();
+  const toast = useRef<Toast>(null);
 
   const handleInterviewSubmit = async (formData: InterviewFormData) => {
     setIsLoading(true);
-    setError(undefined);
-    setCurrentFormData(formData); // Save form data for reuse
+    setCurrentFormData(formData);
     
     try {
       const { data } = await axios.post('/api/chat', formData);
       setResponse(data.response);
     } catch (err) {
-      setError('Failed to generate interview question. Please try again.');
+      if (axios.isAxiosError(err) && err.response?.data?.details) {
+        toast.current?.show({
+          severity: 'warn',
+          summary: 'Validation Error',
+          detail: err.response.data.details,
+          life: 5000,
+          className: 'custom-toast',
+          contentClassName: 'custom-toast-content',
+          style: {
+            background: '#1e293b',
+            color: '#f8fafc',
+            border: '1px solid #475569'
+          },
+          contentStyle: {
+            background: '#1e293b',
+            color: '#f8fafc'
+          }
+        });
+      } else {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to generate interview question. Please try again.',
+          life: 5000,
+          className: 'custom-toast',
+          contentClassName: 'custom-toast-content',
+          style: {
+            background: '#1e293b',
+            color: '#f8fafc',
+            border: '1px solid #475569'
+          },
+          contentStyle: {
+            background: '#1e293b',
+            color: '#f8fafc'
+          }
+        });
+      }
       console.error('Error:', err);
     } finally {
       setIsLoading(false);
@@ -55,12 +94,16 @@ export default function Home() {
   const handleStartOver = () => {
     setResponse(undefined);
     setCurrentFormData(undefined);
-    setError(undefined);
     setFeedback(undefined);
   };
 
+  if (!hasMounted) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-slate-50 dark:from-background dark:to-slate-900">
+      <Toast ref={toast} />
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">AI Interview Practice</h1>
@@ -69,7 +112,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Always show form if no response, or if it's collapsed */}
         {!response ? (
           <InterviewForm onSubmit={handleInterviewSubmit} />
         ) : (
@@ -85,13 +127,11 @@ export default function Home() {
         
         <ResponseDisplay
           isLoading={isLoading}
-          error={error}
           response={response}
           onNextQuestion={handleNextQuestion}
           onSubmitAnswer={handleAnswerSubmit}
         />
 
-        {/* Copyright Watermark */}
         <div className="fixed bottom-4 right-4 text-sm text-gray-400 dark:text-gray-500 opacity-70 font-light">
           Ignas Apsega @ Turing College 2025
         </div>

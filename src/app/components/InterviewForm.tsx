@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Card } from 'primereact/card';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { Slider } from 'primereact/slider';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { Toast } from 'primereact/toast';
 import { InterviewFormProps, InterviewFormData } from '../types/interview';
 
 const interviewTypes = [
@@ -21,9 +22,10 @@ const interviewTypes = [
 ];
 
 export default function InterviewForm({ onSubmit }: InterviewFormProps) {
+  const toast = useRef<Toast>(null);
   const [formData, setFormData] = useState<InterviewFormData>({
     jobDescription: '',
-    interviewType: '',
+    interviewType: 'software_engineering',
     temperature: 0.7,
     maxOutputTokens: 1000,
     topP: 1,
@@ -37,7 +39,14 @@ export default function InterviewForm({ onSubmit }: InterviewFormProps) {
     try {
       await onSubmit(formData);
     } catch (error) {
-      console.error('Error submitting form:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to validate input';
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Validation Error',
+        detail: errorMessage,
+        life: 5000
+      });
+      console.error('Form submission error:', errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -45,6 +54,7 @@ export default function InterviewForm({ onSubmit }: InterviewFormProps) {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 animate-fade-in">
+      <Toast ref={toast} />
       <Card title="Interview Practice Setup" className="shadow-lg">
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           {/* Job Description Input */}
@@ -164,7 +174,6 @@ export default function InterviewForm({ onSubmit }: InterviewFormProps) {
           {/* Submit Button */}
           <Button
             type="submit"
-            disabled={isLoading || !formData.jobDescription || !formData.interviewType}
             className="w-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 text-white border-none font-semibold shadow-md px-6 py-3 text-lg group relative overflow-hidden flex justify-center items-center min-h-[3.5rem]"
           >
             <span className={`transition-opacity duration-200 absolute inset-0 flex items-center justify-center gap-2 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>

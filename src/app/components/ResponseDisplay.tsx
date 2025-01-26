@@ -8,13 +8,29 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { ResponseDisplayProps } from '../types/interview';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
+// Add LoadingDisplay component
+const LoadingDisplay = () => (
+  <div className="w-full max-w-3xl mx-auto mt-8 flex justify-center items-center p-8">
+    <Card className="w-full shadow-lg">
+      <div className="flex flex-col items-center justify-center gap-4 p-6">
+        <ProgressSpinner
+          style={{ width: '50px', height: '50px' }}
+          strokeWidth="4"
+          animationDuration=".5s"
+        />
+        <p className="text-lg text-slate-600 dark:text-slate-300">
+          Generating interview question...
+        </p>
+      </div>
+    </Card>
+  </div>
+);
+
 export default function ResponseDisplay({
   isLoading,
-  error,
   response,
   onNextQuestion,
-  onSubmitAnswer,
-  onReset
+  onSubmitAnswer
 }: ResponseDisplayProps) {
   const [userAnswer, setUserAnswer] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -43,8 +59,8 @@ export default function ResponseDisplay({
     }
   };
 
-  if (error) {
-    return <Message severity="error" text={error} className="w-full" />;
+  if (isLoading) {
+    return <LoadingDisplay />;
   }
 
   if (!response) return null;
