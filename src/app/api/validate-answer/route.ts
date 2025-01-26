@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         "${question}"
         
         Expected response should cover:
-        ${expectedResponse.map(point => `- ${point}`).join('\n')}
+        ${expectedResponse.map((point: string) => `- ${point}`).join('\n')}
         
         Try to explain your approach thoroughly, considering all the points above.`
       });

@@ -9,8 +9,10 @@ const WINDOW_SIZE_IN_SECONDS = 60;
 const MAX_REQUESTS_PER_WINDOW = 20;
 
 export function middleware(request: NextRequest) {
-  // Get IP address
-  const ip = request.ip || 'unknown';
+  // Get IP from headers
+  const ip = request.headers.get('x-forwarded-for') || 
+            request.headers.get('x-real-ip') || 
+            'unknown';
   
   // Only apply to API routes
   if (!request.nextUrl.pathname.startsWith('/api')) {
