@@ -38,11 +38,15 @@ export async function POST(request: Request) {
     - Keep feedback professional and constructive
     - Use only English language
     - If the answer is too brief or generic, suggest expanding on specific points
+    - For brief answers (less than 10 words), provide the actual expected response points
     
     Format your response in these sections:
     1. Strengths: What was well covered
     2. Areas for Improvement: What was missing or could be better
-    3. Overall Assessment: Brief summary and suggestions`;
+    3. Overall Assessment: Brief summary and suggestions
+    4. Expected Response Points:
+       - List 4-6 key points the answer should cover
+       - Each point should be specific and actionable`;
 
     const userPrompt = `
     Question: ${question}
