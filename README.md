@@ -2,6 +2,10 @@
 
 An AI-powered interview preparation tool built with Next.js, Google's Gemini AI, Tailwind CSS, and PrimeReact. This application helps users practice for interviews by generating role-specific questions and providing detailed feedback on their answers.
 
+## Live
+
+[https://genai-one-pager.vercel.app](https://genai-one-pager.vercel.app)
+
 ## Features
 
 - **Role-Based Questions**: Supports multiple roles including:
