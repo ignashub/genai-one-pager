@@ -124,6 +124,16 @@ src/
 GOOGLE_API_KEY=     # Required: Gemini API key
 ```
 
+## Feedback & Suggestions:
+
+
+Ignas made an interesting and comprehensive chat application which satisfies the desired requirements and despite few random submission fails during the demo, technically worked as expected. Ignas demonstrated a solid understanding of prompts, highlighted differences between user and system prompts. As we have discussed during the review, I would think about the following areas for further improvements:
+- As the initial user prompt is used for initial field validation, I would suggest to incorporate it into generating upcoming questions which may be reflect user desires.
+- As per regular user, I would like to get an final evaluation/summary which would reveal my application for a job/interview instead of having an infinitive chat with the application. 
+- Also, I would think about introducing the level of strictness for AI-generated questions, e.g. internship role/regular position. That would make an entire application even more flexible.
+All the defined prompts are good to use, logical and effective. Ignas applied the best practices onto it. As we have discussed, I would suggest to think about storing user interview data/history into databases or/and define responses data type with Pydantic Parser (https://python.langchain.com/v0.1/docs/modules/model_io/output_parsers/types/pydantic/).
+- Tools to check: Ollama (for LLM models and self hosting), Langchain (for prompt engineering), Pydantic Parser (for data type definition), Pychain
+
 ## License
 
 MIT
